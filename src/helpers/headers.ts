@@ -32,3 +32,27 @@ export function processHeaders (headers: any, data: any): any {
   }
   return headers;
 }
+
+/**
+ * 将响应的headers字段从字符串解析成对象结构
+ * @param headers 需要进行处理的响应headers字段
+ */
+export function parseHeaders(headers: string): any {
+  let parsed = Object.create(null);
+  if (!headers) {
+    return;
+  }
+  headers.split('\r\n').forEach(line => {
+    // 这里会存在一个问题，如果是时间的话，会被遗弃去除掉
+    let [key, val] = line.split(':');
+    key = key.trim().toLowerCase();
+    if (!key) {
+      return;
+    }
+    if (val) {
+      val = val.trim();
+    }
+    parsed[key] = val;
+  })
+  return parsed;
+}

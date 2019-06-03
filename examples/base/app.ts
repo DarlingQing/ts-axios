@@ -84,13 +84,16 @@ axios({
 axios({
   method: 'post',
   url: '/base/post',
-  headers: {
-    'content-type': 'application/json;'
-  },
+  // headers: {
+  //   'content-type': 'application/json;'
+  // },
+  responseType: 'json',
   data: {
     a: 1,
     b: 2
   }
+}).then((res) => {
+  console.log(res);
 })
 
 const paramsString = 'q=URLUtils.searchParams&topic=api'

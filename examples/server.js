@@ -16,6 +16,14 @@ app.use(webpackDevMiddleware(compile, {
   }
 }));
 
+app.use(webpackHotMiddleware(compile));
+
+app.use(express.static(__dirname));
+
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({extended: true}));
+
 /**
  *  路由请求
  */
@@ -31,11 +39,9 @@ router.get('/base/get', function(req, res) {
   res.json(req.query);
 });
 
-
 router.post('/base/post', function(req, res) {
   res.json(req.body);
 });
-
 
 router.post('/base/buffer', function(req, res) {
   let msg = [];
@@ -50,15 +56,27 @@ router.post('/base/buffer', function(req, res) {
   })
 });
 
+// 以下是error路由
+router.get('/error/get', function(req, res) {
+  if (Math.random() > 0.5) {
+    res.json({
+      msg: `hello world`
+    });
+  } else {
+    res.status(500);
+    res.end();
+  }
+})
+
+router.get('/error/timeout', function(req, res) {
+  setTimeout(() => {
+    res.json({
+      msg: `hello world`
+    });
+  }, 3000);
+})
+
 app.use(router);
-
-app.use(webpackHotMiddleware(compile));
-
-app.use(express.static(__dirname));
-
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({extended: true}));
 
 const port = process.env.PORT || 8080;
 

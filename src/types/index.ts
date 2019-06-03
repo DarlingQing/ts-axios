@@ -8,7 +8,6 @@ export type Method = 'get' | 'GET'
   | 'patch' | 'PATCH';
 
 /**
-/**
  * 定义请求类型配置项
  */
 export interface AxiosRequestConfig {
@@ -17,7 +16,8 @@ export interface AxiosRequestConfig {
   headers?: any;
   data?: any;
   params?: any;
-  responseType?: XMLHttpRequestResponseType
+  responseType?: XMLHttpRequestResponseType;
+  timeout?: number;
 }
 
 /**
@@ -32,7 +32,18 @@ export interface AxiosResponse {
   request: any;
 }
 
-export interface AxiosPromise extends Promise<AxiosResponse> {
+/**
+ * 定义响应类型为promise类型
+ */
+export interface AxiosPromise extends Promise<AxiosResponse> {}
 
+/**
+ * 定义错误类型
+ */
+export interface AxiosError extends Error {
+  config: AxiosRequestConfig;
+  code?: string;
+  request?: any;
+  response?: AxiosResponse;
+  isAxiosError: boolean;
 }
-
