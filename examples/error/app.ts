@@ -31,11 +31,13 @@ axios({
 axios({
   method: 'get',
   url: '/error/timeout',
-  timeout: 1000
+  timeout: 2000
 }).then((res) => {
   console.log(res);
 }).catch((e: AxiosError) => {
-  console.log(e.message)
-  console.log(e.code)
+  console.log(e.message);
+  console.log(e.config);
+  console.log(e.code);
+  console.log(e.request);
 })
 

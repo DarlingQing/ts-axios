@@ -1,61 +1,19 @@
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types';
-import xhr from './xhr';
-import { buildURL } from './helpers/ulr';
-import { transformRequest, transformResponse } from './helpers/data';
-import { processHeaders } from './helpers/headers';
-
-function axios (config: AxiosRequestConfig): AxiosPromise {
-  processConfig(config);
-  return xhr(config).then((res) => {
-    return transformResponseData(res);
-  });
-}
+import Axios from "./core/Axios";
+import { AxiosInstance } from "./types";
+import { extend } from './helpers/util';
 
 /**
- * 处理配置函数
- * @param config 配置参数
+ * 混合对象方法，将原型对象和混合对象属性以及方法合并
  */
-function processConfig (config: AxiosRequestConfig): void {
-  config.url = transformUrl(config);
-  config.headers = transformHeaders(config);
-  config.data = transformRequestData(config);
+function createInstance(): AxiosInstance{
+  const context = new Axios();
+  // 目的：执行instance函数时，调用request方法时，this指向axios的实例，可以直接调用axios({})该方法
+  const instance = Axios.prototype.request.bind(context);
+  extend(instance, context);
+
+  return instance as AxiosInstance;
 }
 
-
-/**
- * 配置参数url处理
- * @param config 配置参数
- */
-function transformUrl (config: AxiosRequestConfig): string {
-  const { url, params} = config
-  return buildURL(url, params);
-}
-
-
-/**
- * 配置参数data部分数据
- * @param config 配置参数
- */
-function transformRequestData (config: AxiosRequestConfig): any {
-  return transformRequest(config.data);
-}
-
-/**
- * 配置参数headers部分
- * @param config 配置参数
- */
-function transformHeaders (config: AxiosRequestConfig): any {
-  const { headers = {}, data } = config;
-  return processHeaders(headers, data);
-}
-
-/**
- * 将字符串格式转船成JSON对象格式
- * @param res 处理响应数据
- */
-function transformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transformResponse(res.data);
-  return res;
-}
+const axios = createInstance();
 
 export default axios;

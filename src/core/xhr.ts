@@ -1,10 +1,10 @@
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types';
-import { parseHeaders } from './helpers/headers';
-import { createError } from './helpers/error';
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types';
+import { parseHeaders } from '../helpers/headers';
+import { createError } from '../helpers/error';
 
 export default function xhr (config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { data = null, url, method = 'get', headers, responseType, timeout } = config
+    const { data = null, url, method = 'get', headers, responseType, timeout } = config;
 
     const request = new XMLHttpRequest();
 
@@ -16,15 +16,13 @@ export default function xhr (config: AxiosRequestConfig): AxiosPromise {
       request.timeout = timeout;
     }
 
-    request.open(method.toUpperCase(), url, true);
+    request.open(method.toUpperCase(), url!, true);
 
     request.onreadystatechange = function handleLoad() {
       if (request.readyState !== 4) {
         return;
       }
       const responseHeaders = parseHeaders(request.getAllResponseHeaders());
-      // const responseHeaders = request.getAllResponseHeaders();
-      // console.log(responseHeaders);
       const responseData = responseType && responseType !== 'text' ? request.response : request.responseText;
       const response: AxiosResponse = {
         data: responseData,
@@ -37,8 +35,8 @@ export default function xhr (config: AxiosRequestConfig): AxiosPromise {
       handleResponse(response);
     }
 
+    // 请求报错处理
     request.onerror = function handleError() {
-      // reject(new Error('Network Error'));
       reject(createError(
         'Network Error',
         config,
@@ -47,8 +45,8 @@ export default function xhr (config: AxiosRequestConfig): AxiosPromise {
       ))
     }
 
+    // 请求超时处理
     request.ontimeout = function handleTimeout() {
-      // reject(new Error(`Timeout of ${timeout} ms exceeded`));
       reject(createError(
         `Timeout of ${config.timeout} ms exceeded`,
         config,
@@ -68,10 +66,13 @@ export default function xhr (config: AxiosRequestConfig): AxiosPromise {
     request.send(data);
 
     function handleResponse(response: AxiosResponse) {
+      if (response.status === 0) {
+        return;
+      }
+      // 对于响应状态码不在200-300区间的，都视为响应失败
       if (response.status >= 200 && response.status < 300) {
         resolve(response);
       } else {
-        // reject(new Error(`Request failed with status code ${response.status}`));
         reject(createError(
           `Request failed with status code ${response.status}`,
           config,

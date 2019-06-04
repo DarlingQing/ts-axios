@@ -23,3 +23,15 @@ export function isObject (val: any): val is Object {
 export function isPlainObject (val: any): val is Object {
   return toString.call(val) === '[object Object]';
 }
+
+/**
+ * 对象扩展到第一个对象上
+ * @param to 扩展到的目标对象
+ * @param from 需要被扩展的对象
+ */
+export function extend<T, U>(to: T, from: U): T & U {
+  for (let key in from) {
+    ;(to as T & U)[key] = from[key] as any;
+  }
+  return to as T & U;
+} 

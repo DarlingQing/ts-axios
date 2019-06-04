@@ -20,7 +20,7 @@ export function transformResponse(data: any): any {
     try {
       return JSON.parse(data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   return data;

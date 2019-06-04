@@ -111,4 +111,4 @@ axios({
   method: 'post',
   url: '/base/buffer',
   data: arr
-})
+});
