@@ -10,3 +10,18 @@ export function transformRequest (data: any): any {
   }
   return data;
 }
+
+/**
+ * 将服务端返回的字符串类型转换成JSON对象
+ * @param data 响应数据
+ */
+export function transformResponse(data: any): any {
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (error) {
+      // console.log(error);
+    }
+  }
+  return data;
+}
