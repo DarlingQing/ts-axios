@@ -1,53 +1,52 @@
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types';
-import xhr from './xhr';
-import { buildURL } from '../helpers/ulr';
-import { transformRequest, transformResponse } from '../helpers/data';
-import { processHeaders } from '../helpers/headers';
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
+import xhr from './xhr'
+import { buildURL } from '../helpers/ulr'
+import { transformRequest, transformResponse } from '../helpers/data'
+import { processHeaders, flaterHeaders } from '../helpers/headers'
 
-export default function dispatchRequest (config: AxiosRequestConfig): AxiosPromise {
-  processConfig(config);
-  return xhr(config).then((res) => {
-    return transformResponseData(res);
-  });
+export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+  processConfig(config)
+  return xhr(config).then(res => {
+    return transformResponseData(res)
+  })
 }
 
 /**
  * 处理配置函数
  * @param config 配置参数
  */
-function processConfig (config: AxiosRequestConfig): void {
-  config.url = transformUrl(config);
-  config.headers = transformHeaders(config);
-  config.data = transformRequestData(config);
+function processConfig(config: AxiosRequestConfig): void {
+  config.url = transformUrl(config)
+  config.headers = transformHeaders(config)
+  config.data = transformRequestData(config)
+  config.headers = flaterHeaders(config.headers, config.method!)
 }
-
 
 /**
  * 配置参数url处理
  * @param config 配置参数
  */
-function transformUrl (config: AxiosRequestConfig): string {
-  const { url, params} = config;
+function transformUrl(config: AxiosRequestConfig): string {
+  const { url, params } = config
   // 类型断言方式确保url是一定存在的
-  return buildURL(url!, params);
+  return buildURL(url!, params)
 }
-
 
 /**
  * 配置参数data部分数据
  * @param config 配置参数
  */
-function transformRequestData (config: AxiosRequestConfig): any {
-  return transformRequest(config.data);
+function transformRequestData(config: AxiosRequestConfig): any {
+  return transformRequest(config.data)
 }
 
 /**
  * 配置参数headers部分
  * @param config 配置参数
  */
-function transformHeaders (config: AxiosRequestConfig): any {
-  const { headers = {}, data } = config;
-  return processHeaders(headers, data);
+function transformHeaders(config: AxiosRequestConfig): any {
+  const { headers = {}, data } = config
+  return processHeaders(headers, data)
 }
 
 /**
@@ -55,6 +54,6 @@ function transformHeaders (config: AxiosRequestConfig): any {
  * @param res 处理响应数据
  */
 function transformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transformResponse(res.data);
-  return res;
+  res.data = transformResponse(res.data)
+  return res
 }

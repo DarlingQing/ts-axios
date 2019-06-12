@@ -25,6 +25,7 @@ export interface AxiosRequestConfig {
   params?: any
   responseType?: XMLHttpRequestResponseType
   timeout?: number
+  [propName: string]: any
 }
 
 /**
@@ -59,6 +60,7 @@ export interface AxiosError extends Error {
  * Axios接口扩展，支持以下方法，接口并能添加泛型参数，目的：为了响应数据支持泛型
  */
 export interface Axios {
+  defaults: AxiosRequestConfig
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosRequestConfig>

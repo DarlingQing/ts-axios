@@ -26,7 +26,7 @@ axios.interceptors.response.use(res => {
   return res
 })
 
-axios.interceptors.response.eject(interceptor)
+axios.interceptors.response.eject(interceptor);
 
 axios({
   url: '/interceptor/get',

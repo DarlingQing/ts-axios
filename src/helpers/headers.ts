@@ -1,18 +1,19 @@
-import { isPlainObject } from './util';
+import { isPlainObject, deepMerge } from './util'
+import { Method } from '../types'
 
 /**
  * 处理请求头部大小点不敏感的参数，统一进行处理，例如content-type,Content-type等，统一转换成Content-Type
  * @param headers 请求头部
  * @param normalizeName 需要进行大小写的参数名称
  */
-function normalizeHeaderName (headers: any, normalizedName: string): void {
+function normalizeHeaderName(headers: any, normalizedName: string): void {
   if (!headers) {
-    return;
+    return
   }
   Object.keys(headers).forEach(name => {
     if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
-      headers[normalizedName] = headers[name];
-      delete headers[name];
+      headers[normalizedName] = headers[name]
+      delete headers[name]
     }
   })
 }
@@ -22,15 +23,15 @@ function normalizeHeaderName (headers: any, normalizedName: string): void {
  * @param headers 请求配置头部
  * @param data 请求数据对象data
  */
-export function processHeaders (headers: any, data: any): any {
-  normalizeHeaderName(headers, 'Content-Type');
-  
+export function processHeaders(headers: any, data: any): any {
+  normalizeHeaderName(headers, 'Content-Type')
+
   if (isPlainObject(data)) {
     if (headers && !headers['Content-Type']) {
-      headers['Content-Type'] = 'application/json;charset=utf-8';
+      headers['Content-Type'] = 'application/json;charset=utf-8'
     }
   }
-  return headers;
+  return headers
 }
 
 /**
@@ -38,21 +39,40 @@ export function processHeaders (headers: any, data: any): any {
  * @param headers 需要进行处理的响应headers字段
  */
 export function parseHeaders(headers: string): any {
-  let parsed = Object.create(null);
+  let parsed = Object.create(null)
   if (!headers) {
-    return;
+    return
   }
   headers.split('\r\n').forEach(line => {
     // 这里会存在一个问题，如果是时间的话，会被遗弃去除掉
-    let [key, val] = line.split(':');
-    key = key.trim().toLowerCase();
+    let [key, val] = line.split(':')
+    key = key.trim().toLowerCase()
     if (!key) {
-      return;
+      return
     }
     if (val) {
-      val = val.trim();
+      val = val.trim()
     }
-    parsed[key] = val;
+    parsed[key] = val
   })
-  return parsed;
+  return parsed
+}
+
+/**
+ * 对common中定义的header、method字段进行
+ * @param headers 请求传入的headers类型
+ * @param method 请求的metho的类型
+ */
+export function flaterHeaders(headers: any, method: Method): any {
+  if (!headers) {
+    return headers
+  }
+  headers = deepMerge(headers.comments || {}, headers[method] || {}, headers)
+
+  const methodsToDelete = ['delete', 'get', 'head', 'options', 'post', 'put', 'patch', 'common']
+  methodsToDelete.forEach(method => {
+    delete headers[method]
+  })
+
+  return headers
 }

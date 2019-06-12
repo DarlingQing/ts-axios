@@ -8,6 +8,7 @@ import {
 } from '../types'
 import dispatchRequest from './dispatchRequest'
 import InterceptorManager from './InterceptorManager'
+import mergeConfg from './mergeConfig'
 
 interface Interceptors {
   request: InterceptorManager<AxiosRequestConfig>
@@ -26,9 +27,11 @@ interface PromiseChain<T> {
  *  实现混合对象方法
  */
 export default class Axios {
+  defaults: AxiosRequestConfig
   interceptors: Interceptors
 
-  constructor() {
+  constructor(initConfig: AxiosRequestConfig) {
+    this.defaults = initConfig
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
       response: new InterceptorManager<AxiosResponse>()
@@ -44,6 +47,10 @@ export default class Axios {
     } else {
       config = url
     }
+
+    console.log(this.defaults)
+    config = mergeConfg(this.defaults, config)
+    console.log(config)
     const chain: PromiseChain<any>[] = [
       {
         resolved: dispatchRequest,
@@ -51,10 +58,12 @@ export default class Axios {
       }
     ]
 
+    // 后添加的先执行
     this.interceptors.request.forEach(interceptor => {
       chain.unshift(interceptor)
     })
 
+    // 先添加的先执行
     this.interceptors.response.forEach(interceptor => {
       chain.push(interceptor)
     })
