@@ -1,3 +1,5 @@
+import { isCancel } from '../cancel/Cancel'
+
 export type Method =
   | 'get'
   | 'GET'
@@ -25,6 +27,9 @@ export interface AxiosRequestConfig {
   params?: any
   responseType?: XMLHttpRequestResponseType
   timeout?: number
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+  cancelToken?: CancelToken
   [propName: string]: any
 }
 
@@ -91,6 +96,18 @@ export interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+/**
+ * 静态接口
+ * 提供create接受一个AxiosRequestConfig类型的配置
+ */
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
+
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
+}
+
 export interface ResolvedFn<T = any> {
   (val: T): T | Promise<T>
 }
@@ -111,4 +128,59 @@ export interface AxiosInterceptorManager<T> {
 
   // 删除拦截器
   eject(id: number): void
+}
+
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
+}
+
+/**
+ * 取消请求实力类型的接口定义
+ */
+export interface CancelToken {
+  promise: Promise<Cancel>
+  resaon?: Cancel
+  throwIfRequested(): void
+}
+
+/**
+ * 取消方法的接口定义
+ */
+export interface Canceler {
+  (message?: string): void
+}
+
+/**
+ * CancelToken类构造函数参数的接口定义
+ */
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+/**
+ * 作为CancelToken类静态方法，
+ */
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+
+/**
+ * 作为CancelToken的类类型
+ */
+export interface CancelTokenStatic {
+  new (executor: CancelExecutor): CancelToken
+
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+
+/**
+ * Cancel的实例类型
+ */
+export interface CancelStatic {
+  new (message?: string): Cancel
 }

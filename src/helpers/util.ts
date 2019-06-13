@@ -47,6 +47,7 @@ export function deepMerge(...objs: any[]): any {
     if (obj) {
       Object.keys(obj).forEach(key => {
         const val = obj[key]
+        // console.log(val);
         if (isPlainObject(val)) {
           if (isPlainObject(result[key])) {
             result[key] = deepMerge(result[key], val)
@@ -59,6 +60,5 @@ export function deepMerge(...objs: any[]): any {
       })
     }
   })
-
   return result
 }

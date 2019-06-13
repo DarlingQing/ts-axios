@@ -1,4 +1,6 @@
 import { AxiosRequestConfig } from './types'
+import { processHeaders } from './helpers/headers'
+import { transformRequest, transformResponse } from './helpers/data'
 
 /**
  * 实现默认配置
@@ -12,7 +14,20 @@ const defaults: AxiosRequestConfig = {
     common: {
       Accept: 'application/json, text/plain, */*'
     }
-  }
+  },
+  // 把请求数据和响应数据的处理逻辑放在默认配置中
+  transformRequest: [
+    function(data: any, headers: any): any {
+      processHeaders(headers, data)
+      return transformRequest(data)
+    }
+  ],
+
+  transformResponse: [
+    function(data: any): any {
+      return transformResponse(data)
+    }
+  ]
 }
 
 const methodsNoData = ['delete', 'get', 'head', 'options']

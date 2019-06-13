@@ -59,15 +59,15 @@ export function parseHeaders(headers: string): any {
 }
 
 /**
- * 对common中定义的header、method字段进行
+ * 对common中定义的header、method字段
  * @param headers 请求传入的headers类型
  * @param method 请求的metho的类型
  */
-export function flaterHeaders(headers: any, method: Method): any {
+export function flatterHeaders(headers: any, method: Method): any {
   if (!headers) {
     return headers
   }
-  headers = deepMerge(headers.comments || {}, headers[method] || {}, headers)
+  headers = deepMerge(headers.common || {}, headers[method] || {}, headers)
 
   const methodsToDelete = ['delete', 'get', 'head', 'options', 'post', 'put', 'patch', 'common']
   methodsToDelete.forEach(method => {

@@ -6,6 +6,7 @@ const strats = Object.create(null)
 
 // 默认的合并策略
 function defaultStrat(val1: any, val2: any): any {
+  // console.log(val2);
   return typeof val2 !== 'undefined' ? val2 : val1
 }
 
@@ -71,6 +72,6 @@ export default function mergeConfg(
     config[key] = strat(config1[key], config2![key])
   }
 
-  console.log(config)
+  // console.log(config);
   return config
 }
