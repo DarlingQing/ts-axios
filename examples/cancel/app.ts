@@ -15,7 +15,7 @@ setTimeout(() => {
 
 
 setTimeout(() => {
-  source.cancel('Operartion canceled by the user.');
+  // source.cancel('Operartion canceled by the user.');
 
   axios.post('/cancel/post',
     {

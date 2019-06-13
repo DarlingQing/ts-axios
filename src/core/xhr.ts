@@ -5,7 +5,16 @@ import CancelToken from '../cancel/CancelToken'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { data = null, url, method = 'get', headers, responseType, timeout, cancelToken } = config
+    const {
+      data = null,
+      url,
+      method = 'get',
+      headers,
+      responseType,
+      timeout,
+      cancelToken,
+      withCredentials
+    } = config
 
     const request = new XMLHttpRequest()
 
@@ -18,6 +27,10 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     }
 
     request.open(method.toUpperCase(), url!, true)
+
+    if (withCredentials) {
+      request.withCredentials = withCredentials
+    }
 
     request.onreadystatechange = function handleLoad() {
       if (request.readyState !== 4) {
