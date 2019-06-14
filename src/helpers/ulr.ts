@@ -1,10 +1,20 @@
-import { isDate, isPlainObject } from './util';
+import { isDate, isPlainObject } from './util'
+
+/**
+ * url接口定义
+ */
+interface URLOrigin {
+  // 协议字段
+  protocol: string
+  // 端口字段
+  host: string
+}
 
 /**
  * 统一对资源标识符的组成部分进行编码
  * @param val 需要进行编码的值
  */
-function encord (val: string): string {
+function encord(val: string): string {
   return encodeURIComponent(val)
     .replace(/%40/g, '@')
     .replace(/%3A/gi, ':')
@@ -22,41 +32,66 @@ function encord (val: string): string {
  */
 export function buildURL(url: string, params?: any) {
   if (!params) {
-    return url;
+    return url
   }
-  const parts: string[] = [];
-  Object.keys(params).forEach((key) => {
-    let val = params[key];
+  const parts: string[] = []
+  Object.keys(params).forEach(key => {
+    let val = params[key]
     if (val === null || typeof val === 'undefined') {
       // forEach中写return不会跳出，会进入下一次循环
-      return;
+      return
     }
-    let values: string[] = [];
+    let values: string[] = []
     // 统一用数组形式处理
     if (Array.isArray(val)) {
-      values = val;
+      values = val
     } else {
-      values = [val];
+      values = [val]
     }
-    values.forEach((val) => {
+    values.forEach(val => {
       if (isDate(val)) {
-        val = val.toISOString();
+        val = val.toISOString()
       } else if (isPlainObject(val)) {
-        val = JSON.stringify(val);
+        val = JSON.stringify(val)
       }
       parts.push(`${encord(key)}=${encord(val)}`)
       // parts.push(`${key}=${val}`)
     })
   })
-  let serializedParams = parts.join('&');
+  let serializedParams = parts.join('&')
 
   //  拼接完整的url
   if (serializedParams) {
-    const markIndex = url.indexOf('#');
+    const markIndex = url.indexOf('#')
     if (markIndex !== -1) {
-      url = url.slice(0, markIndex);
+      url = url.slice(0, markIndex)
     }
-    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams
   }
-  return url;
+  return url
+}
+
+/**
+ * 判断是否是同域请求：对比host和protocol是否相同
+ * @param requestURL 需要判断的url
+ */
+export function isURLSameOrigin(requestURL: string): boolean {
+  const parsedOrigin = resolveURL(requestURL)
+  return (
+    parsedOrigin.protocol === currentOrigin.protocol && parsedOrigin.host === currentOrigin.host
+  )
+}
+
+// 创建a标签，并设置href属性
+const urlParsionNode = document.createElement('a')
+const currentOrigin = resolveURL(window.location.href)
+
+function resolveURL(url: string): URLOrigin {
+  urlParsionNode.setAttribute('href', url)
+  const { protocol, host } = urlParsionNode
+
+  return {
+    protocol,
+    host
+  }
 }

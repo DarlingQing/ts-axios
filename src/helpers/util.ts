@@ -25,6 +25,13 @@ export function isPlainObject(val: any): val is Object {
 }
 
 /**
+ * 判断一个值是不是formData类型
+ * @param val 传入的值
+ */
+export function isFormData(val: any): boolean {
+  return typeof val !== 'undefined' && val instanceof FormData
+}
+/**
  * 对象扩展到第一个对象上
  * @param to 扩展到的目标对象
  * @param from 需要被扩展的对象
